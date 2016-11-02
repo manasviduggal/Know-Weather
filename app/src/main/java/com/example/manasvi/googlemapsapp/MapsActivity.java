@@ -1,5 +1,6 @@
 package com.example.manasvi.googlemapsapp;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,13 +39,15 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback ,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener,LocationListener, View.OnClickListener {
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    Button knowWeather;
+  public static Double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -56,6 +61,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //TextView textview = (TextView)findViewById(R.id.test);
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+
+        knowWeather= (Button)findViewById(R.id.knowWeather);
+        knowWeather.setOnClickListener(this);
     }
 
     @Override
@@ -111,11 +119,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
     @Override
     public void onConnectionSuspended(int i) {}
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
+
 
     @Override
     public void onLocationChanged(Location location)
@@ -125,6 +135,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCurrLocationMarker.remove();
         }
 
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
@@ -262,4 +274,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v== knowWeather) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("Latitude", latitude);
+            intent.putExtra("Longitude", longitude);
+            startActivity(intent);
+        }
+    }
 }
